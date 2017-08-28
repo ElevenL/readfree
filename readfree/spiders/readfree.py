@@ -47,8 +47,8 @@ class ReadfreeSpider(CrawlSpider):
         }, callback=self.after_login)
 
     def after_login(self, response):
-        code = response.code
-        print code
+        errmsg = Selector(response).xpath('//ul[@class="errorlist"]/li/text()').extract()[0].encode('utf-8')
+        print errmsg
     # rules = [
     #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
     #     Rule(SgmlLinkExtractor(allow=(r'/blogshow',)), callback='parse_content')
