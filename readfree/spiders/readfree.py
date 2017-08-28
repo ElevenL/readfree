@@ -19,7 +19,11 @@ class ReadfreeSpider(CrawlSpider):
 
     def start_requests(self):
         form = [FormRequest("http://http://readfree.me/accounts/login/")]
+        print '==============='
         print form
+        print '==============='
+        return form
+
 
     # rules = [
     #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
