@@ -42,7 +42,9 @@ class ReadfreeSpider(CrawlSpider):
         img = Image.open(img_path)
         bw = img.convert('L').point(lambda x: 0 if x < 1 else 255, '1')
         captcha_01 = pytesseract.image_to_string(bw)
+        print '========='
         print captcha_01
+        print '========='
         return captcha_01
 
     def login(self, response):
