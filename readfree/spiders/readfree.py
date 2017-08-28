@@ -5,7 +5,7 @@ from scrapy.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
 from scrapy.http import FormRequest, Request
-from readfree.items import ReadfreeItem
+#from readfree.items import ReadfreeItem
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -18,7 +18,8 @@ class ReadfreeSpider(CrawlSpider):
     # ]
 
     def start_requests(self):
-        form = FormRequest("http://http://readfree.me/accounts/login/")
+        form = [FormRequest("http://http://readfree.me/accounts/login/")]
+        print form
 
     # rules = [
     #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
