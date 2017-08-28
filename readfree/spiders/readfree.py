@@ -26,6 +26,7 @@ class ReadfreeSpider(CrawlSpider):
 
     def init(self, response):
         self.csrfmiddlewaretoken = Selector(response).xpath('//input[@name="csrfmiddlewaretoken"]/@value').extract()[0]
+        self.captcha_0 = Selector(response).xpath('//input[@name="captcha_0"]/@value').extract()[0]
         src = Selector(response).xpath('//img[@class="captcha"]/@src').extract()[0]
         capimgurl = self.base_url + src
         print self.csrfmiddlewaretoken
@@ -35,6 +36,15 @@ class ReadfreeSpider(CrawlSpider):
     def getcapid(self, response):
         Image.open(StringIO(response.body)).show()
         return raw_input('input capid:')
+
+    def login(self, response):
+        return FormRequest(self.base_url + "account/login", formdata={
+            "csrfmiddlewaretoken": self.csrfmiddlewaretoken,
+            "email": "lhq2818@163.com",
+            "password": "LHQFH2818",
+            "captcha_0": self.captcha_0,
+            "captcha_1": self.getcapid(response)
+        })
 
     # rules = [
     #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
