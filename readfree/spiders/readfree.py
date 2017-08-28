@@ -1,5 +1,7 @@
 # -*-coding:utf-8-*-
 import sys
+import pytesseract
+import tempfile
 import scrapy, json
 from PIL import Image
 from StringIO import StringIO
@@ -34,8 +36,14 @@ class ReadfreeSpider(CrawlSpider):
         return Request(capimgurl, callback=self.login)
 
     def getcapid(self, response):
-        Image.open(StringIO(response.body)).show()
-        return raw_input('input capid:')
+        img_path = tempfile.mktemp()
+        with open(img_path, 'wb') as f:
+            f.write(bytes(response.content))
+        img = Image.open(img_path)
+        bw = img.convert('L').point(lambda x: 0 if x < 1 else 255, '1')
+        captcha_01 = pytesseract.image_to_string(bw)
+        print captcha_01
+        return captcha_01
 
     def login(self, response):
         return FormRequest(self.base_url + "/accounts/login", formdata={
