@@ -1,6 +1,8 @@
 # -*-coding:utf-8-*-
 import sys
 import scrapy, json
+from PIL import Image
+from StringIO import StringIO
 from scrapy.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
@@ -17,16 +19,22 @@ class ReadfreeSpider(CrawlSpider):
     #     "http://readfree.me/"
     # ]
 
+
     def start_requests(self):
-        return [FormRequest("http://readfree.me/accounts/login/", callback=self.init)]
+        self.base_url = 'http://readfree.me'
+        return [FormRequest(self.base_url + "/accounts/login/", callback=self.init)]
 
     def init(self, response):
         self.csrfmiddlewaretoken = Selector(response).xpath('//input[@name="csrfmiddlewaretoken"]/@value').extract()[0]
         src = Selector(response).xpath('//img[@class="captcha"]/@src').extract()[0]
-        capimgurl = "http://readfree.me" + src
+        capimgurl = self.base_url + src
         print self.csrfmiddlewaretoken
         print capimgurl
-        return Request(capimgurl)
+        return Request(capimgurl, callback=self.getcapid)
+
+    def getcapid(self, response):
+        Image.open(StringIO(response.body)).show()
+        return raw_input('input capid:')
 
     # rules = [
     #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
