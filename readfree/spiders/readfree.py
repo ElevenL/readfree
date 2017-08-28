@@ -18,7 +18,7 @@ class ReadfreeSpider(CrawlSpider):
     # ]
 
     def start_requests(self):
-        return [FormRequest("http://http://readfree.me/accounts/login/", callback=self.init)]
+        return [FormRequest("http://readfree.me/accounts/login/", callback=self.init)]
 
     def init(self, response):
         self.csrfmiddlewaretoken = Selector(response).xpath('//input[@name="csrfmiddlewaretoken"]/@value').extract()[0]
