@@ -31,7 +31,7 @@ class ReadfreeSpider(CrawlSpider):
         capimgurl = self.base_url + src
         print self.csrfmiddlewaretoken
         print capimgurl
-        return Request(capimgurl, callback=self.getcapid)
+        return Request(capimgurl, callback=self.login)
 
     def getcapid(self, response):
         Image.open(StringIO(response.body)).show()
