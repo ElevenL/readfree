@@ -44,8 +44,11 @@ class ReadfreeSpider(CrawlSpider):
             "password": "LHQFH2818",
             "captcha_0": self.captcha_0,
             "captcha_1": self.getcapid(response)
-        })
+        }, callback=self.after_login)
 
+    def after_login(self, response):
+        code = response.code
+        print code
     # rules = [
     #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
     #     Rule(SgmlLinkExtractor(allow=(r'/blogshow',)), callback='parse_content')
