@@ -38,7 +38,7 @@ class ReadfreeSpider(CrawlSpider):
         return raw_input('input capid:')
 
     def login(self, response):
-        return FormRequest(self.base_url + "/account/login", formdata={
+        return FormRequest(self.base_url + "/accounts/login", formdata={
             "csrfmiddlewaretoken": self.csrfmiddlewaretoken,
             "email": "lhq2818@163.com",
             "password": "LHQFH2818",
