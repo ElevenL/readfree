@@ -18,12 +18,15 @@ class ReadfreeSpider(CrawlSpider):
     # ]
 
     def start_requests(self):
-        form = [FormRequest("http://http://readfree.me/accounts/login/")]
-        print '==============='
-        print form
-        print '==============='
-        return form
+        return [FormRequest("http://http://readfree.me/accounts/login/", callback=self.init)]
 
+    def init(self, response):
+        self.csrfmiddlewaretoken = Selector(response).xpath('//input[@name="csrfmiddlewaretoken"]/@value').extract()[0]
+        src = Selector(response).xpath('//img[@class="captcha"]/@src').extract()[0]
+        capimgurl = "http://readfree.me" + src
+        print self.csrfmiddlewaretoken
+        print capimgurl
+        return Request(capimgurl)
 
     # rules = [
     #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
