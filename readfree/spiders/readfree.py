@@ -1,4 +1,5 @@
 # -*-coding:utf-8-*-
+from __future__ import absolute_import
 import sys
 import pytesseract
 import tempfile
@@ -10,7 +11,7 @@ from scrapy.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
 from scrapy.http import FormRequest, Request
-#from readfree.items import ReadfreeItem
+from readfree.items import ReadfreeItem
 np.set_printoptions(threshold=np.inf)
 
 
@@ -20,10 +21,13 @@ sys.setdefaultencoding("utf-8")
 class ReadfreeSpider(CrawlSpider):
     name = "readfree"
     allowed_domains = ["readfree.me"]
-    # start_urls = [
-    #     "http://readfree.me/"
-    # ]
+    start_urls = [
+        "http://readfree.me/"
+    ]
 
+    rules = [
+        Rule(SgmlLinkExtractor(allow=(r'/?page=\d+',)), callback='parse_content')
+    ]
 
     def start_requests(self):
         self.base_url = 'http://readfree.me'
@@ -44,7 +48,7 @@ class ReadfreeSpider(CrawlSpider):
         with open(img_path, 'wb') as f:
             f.write(bytes(response.body))
         img = Image.open(img_path)
-
+        img.save('img.png')
         # enhancer = ImageEnhance.Contrast(img)
         # img = enhancer.enhance(2)
         # gray = img.convert('1')
@@ -61,10 +65,10 @@ class ReadfreeSpider(CrawlSpider):
         #灰度化
         width, height = img.size
         gray = img.convert('L')
-        gray.save('aaa.png')
+        gray.save('gray.png')
         print np.array(gray)
         gray = gray.point(lambda p: 0 if p < 90 else 255)
-        gray.save('gray.png')
+        gray.save('point.png')
         for x in range(width):
             for y in range(height):
                 if x == 0 or x == width - 1 or y == 0 or y == height - 1:
@@ -82,12 +86,14 @@ class ReadfreeSpider(CrawlSpider):
                     if count < 2:
                         gray.putpixel((x, y), 255)
         # two = gray.point(lambda p: 0 if 15 < p < 90 else 256)
-        gray.save('gray1.png')
+        gray.save('two.png')
         min_res = gray.filter(ImageFilter.MinFilter)
         med_res = min_res.filter(ImageFilter.MedianFilter)
         for _ in range(2):
             med_res = med_res.filter(ImageFilter.MedianFilter)
-        captcha_01 = pytesseract.image_to_string(med_res)
+        img.show()
+        # captcha_01 = pytesseract.image_to_string(med_res)
+        captcha_01 = raw_input('input capid:')
         print '========='
         print captcha_01
         print '========='
@@ -103,30 +109,25 @@ class ReadfreeSpider(CrawlSpider):
         }, callback=self.after_login)
 
     def after_login(self, response):
-        errmsg = Selector(response).xpath('//ul[@class="errorlist"]/li/text()').extract()[0].encode('utf-8')
-        print errmsg
-    # rules = [
-    #     Rule(SgmlLinkExtractor(allow=(r'/bloglist',))),
-    #     Rule(SgmlLinkExtractor(allow=(r'/blogshow',)), callback='parse_content')
-    # ]
+        # errmsg = Selector(response).xpath('//ul[@class="errorlist"]/li/text()').extract()[0].encode('utf-8')
+        # print errmsg
+        for url in self.start_urls:
+            yield self.make_requests_from_url(url)
 
-    #def parse(self, response):
-    #    for href in response.xpath('//a/@href').extract():
-    #        if str(href).startswith('/blogshow'):
-    #            url = 'http://www.shareditor.com' + href
-    #            yield scrapy.Request(url, callback = self.parse_content)
-    #        elif str(href).startswith('/bloglist'):
-    #            url = 'http://www.shareditor.com' + href
-    #            yield scrapy.Request(url, callback = self.parse)
-
-    # def parse_content(self, response):
-    #     item = ReadfreeItem()
-    #     item['title'] = response.xpath("/html/head/title/text()").extract()[0].decode('utf-8')
-    #     item['date'] = response.xpath("//small/text()").extract()[0].decode('utf-8')
-    #     item['link'] = response.url
-    #     body = ''
-    #     for text in response.xpath("//p/text()").extract():
-    #         body += text
-    #     item['desc'] = body.decode('utf-8')
-    #     #print item['title'],item['date'],item['link'],item['desc']
-    #     yield item
+    def parse_content(self, response):
+        print 'parse_content'
+        books = response.css('ul.unstyled.book-index > li.book-item')
+        print '=============='
+        # print response.body
+        # print books
+        print len(books)
+        print '=============='
+        for i in range(1, len(books)):
+            book = response.css('(ul.unstyled.book-index > li.book-item)[%d]' % i)
+            item = ReadfreeItem()
+            item['bookname'] = book.xpath('//div[@class="book-info"]/a/text()').extract()[0].decode('utf-8')
+            item['author'] = book.xpath('//div[@class="book-author"]/a/text()').extract()[0].decode('utf-8')
+            item['douban_score'] = book.xpath('//span[@class="douban"]/span[@class="badge badge-success"]/text()').extract()[0].decode('utf-8')
+            item['bookimg'] = book.xpath('//a[@class="pjax"]/img/@src').extract()[0]
+            # print item['bookname'],item['author'],item['bookimg']
+            yield item
