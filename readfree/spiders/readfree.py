@@ -61,7 +61,7 @@ class ReadfreeSpider(CrawlSpider):
             for y in range(height):
                 if x == 0 or x == width - 1 or y == 0 or y == height - 1:
                     gray.putpixel((x, y), 0)
-                elif gray.getpixel((x, y)) == 1:
+                elif gray.getpixel((x, y)) != 0:
                     count = 0
                     if gray.getpixel((x, y - 1)) == 0:
                         count += 1
