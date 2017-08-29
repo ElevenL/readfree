@@ -37,10 +37,12 @@ class ReadfreeSpider(CrawlSpider):
 
     def getcapid(self, response):
         img_path = tempfile.mktemp()
+        print img_path
         with open(img_path, 'wb') as f:
             f.write(bytes(response.body))
         img = Image.open(img_path)
         bw = img.convert('L').point(lambda x: 0 if x < 1 else 255, '1')
+        bw.save('aaa.png')
         captcha_01 = pytesseract.image_to_string(bw)
         print '========='
         print captcha_01
