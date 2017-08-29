@@ -3,7 +3,7 @@ import sys
 import pytesseract
 import tempfile
 import scrapy, json
-from PIL import Image
+from PIL import Image, ImageFilter
 from StringIO import StringIO
 from scrapy.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
@@ -41,11 +41,22 @@ class ReadfreeSpider(CrawlSpider):
         with open(img_path, 'wb') as f:
             f.write(bytes(response.body))
         img = Image.open(img_path)
+        if hasattr(img, "width"):
+            width, height = img.width, img.height
+        else:
+            width, height = img.size
+        for x in range(width):
+            for y in range(height):
+                if img.getpixel((x, y)) < (100, 100, 100):
+                    img.putpixel((x, y), (256, 256, 256))
         gray = img.convert('L')
-        gray.save('gray.png')
-        bw = gray.point(lambda x: 0 if 68 < x < 90 else 256)
-        bw.save('aaa.png')
-        captcha_01 = pytesseract.image_to_string(bw)
+        gray.save('gary.png')
+        two = gray.point(lambda p: 0 if 68 < p < 90 else 256)
+        min_res = two.filter(ImageFilter.MinFilter)
+        med_res = min_res.filter(ImageFilter.MedianFilter)
+        for _ in range(2):
+            med_res = med_res.filter(ImageFilter.MedianFilter)
+        captcha_01 = pytesseract.image_to_string(med_res)
         print '========='
         print captcha_01
         print '========='
