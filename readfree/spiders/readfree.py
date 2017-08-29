@@ -51,8 +51,8 @@ class ReadfreeSpider(CrawlSpider):
                     img.putpixel((x, y), (256, 256, 256))
         # gray = img.convert('L')
         img.save('img.png')
-        for x in range(1,width):
-            for y in range(1, height):
+        for x in range(width):
+            for y in range(height):
                 if x == 0 or x == width - 1 or y == 0 or y == height - 1:
                     img.putpixel((x, y), (256, 256, 256))
                 elif img.getpixel((x, y)) != (256, 256, 256):
