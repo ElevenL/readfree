@@ -3,6 +3,7 @@ import sys
 import pytesseract
 import tempfile
 import scrapy, json
+import numpy as np
 from PIL import Image, ImageFilter, ImageEnhance
 from StringIO import StringIO
 from scrapy.linkextractors.sgml import SgmlLinkExtractor
@@ -55,7 +56,11 @@ class ReadfreeSpider(CrawlSpider):
             for y in range(height):
                 if img.getpixel((x, y)) > (150, 150, 150):
                     img.putpixel((x, y), (256, 256, 256))
-        gray = img.convert('L').convert('1')
+        #灰度化
+        gray = img.convert('L')
+        gray.save('gray.png')
+        print np.array(gray)
+        two = gray.point(lambda p: 0 if 15 < p < 90 else 1)
         gray.save('gray.png')
         for x in range(width):
             for y in range(height):
