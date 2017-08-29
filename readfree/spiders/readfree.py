@@ -72,7 +72,7 @@ class ReadfreeSpider(CrawlSpider):
                         count += 1
                     if gray.getpixel((x + 1, y)) == 0:
                         count += 1
-                    if count < 3:
+                    if count < 2:
                         gray.putpixel((x, y), 1)
         # two = gray.point(lambda p: 0 if 15 < p < 90 else 256)
         gray.save('gray1.png')
