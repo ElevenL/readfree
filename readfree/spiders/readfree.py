@@ -62,7 +62,7 @@ class ReadfreeSpider(CrawlSpider):
         gray = img.convert('L')
         gray.save('gray.png')
         print np.array(gray)
-        two = gray.point(lambda p: 0 if 15 < p < 90 else 1)
+        two = gray.point(lambda p: 0 if p < 120 else 1)
         gray.save('gray.png')
         for x in range(width):
             for y in range(height):
