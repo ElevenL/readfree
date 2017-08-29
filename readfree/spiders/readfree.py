@@ -61,7 +61,7 @@ class ReadfreeSpider(CrawlSpider):
         #灰度化
         width, height = img.size
         gray = img.convert('L')
-        gray.save('gray.png')
+        gray.save('aaa.png')
         print np.array(gray)
         two = gray.point(lambda p: 0 if p < 120 else 255)
         gray.save('gray.png')
