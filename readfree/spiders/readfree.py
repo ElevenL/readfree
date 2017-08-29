@@ -50,15 +50,16 @@ class ReadfreeSpider(CrawlSpider):
         # gray = img.convert('1')
 
 
-        if hasattr(img, "width"):
-            width, height = img.width, img.height
-        else:
-            width, height = img.size
-        for x in range(width):
-            for y in range(height):
-                if img.getpixel((x, y)) > (150, 150, 150):
-                    img.putpixel((x, y), (256, 256, 256))
+        # if hasattr(img, "width"):
+        #     width, height = img.width, img.height
+        # else:
+        #     width, height = img.size
+        # for x in range(width):
+        #     for y in range(height):
+        #         if img.getpixel((x, y)) > (150, 150, 150):
+        #             img.putpixel((x, y), (256, 256, 256))
         #灰度化
+        width, height = img.size
         gray = img.convert('L')
         gray.save('gray.png')
         print np.array(gray)
