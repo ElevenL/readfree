@@ -42,21 +42,20 @@ class ReadfreeSpider(CrawlSpider):
             f.write(bytes(response.body))
         img = Image.open(img_path)
 
-        enhancer = ImageEnhance.Contrast(img)
-        img = enhancer.enhance(2)
-        gray = img.convert('1')
+        # enhancer = ImageEnhance.Contrast(img)
+        # img = enhancer.enhance(2)
+        # gray = img.convert('1')
 
 
-        # if hasattr(img, "width"):
-        #     width, height = img.width, img.height
-        # else:
-        #     width, height = img.size
-        # for x in range(width):
-        #     for y in range(height):
-        #         if img.getpixel((x, y)) > (150, 150, 150):
-        #             img.putpixel((x, y), (256, 256, 256))
-        # gray = img.convert('L')
-        width, height = img.size
+        if hasattr(img, "width"):
+            width, height = img.width, img.height
+        else:
+            width, height = img.size
+        for x in range(width):
+            for y in range(height):
+                if img.getpixel((x, y)) > (150, 150, 150):
+                    img.putpixel((x, y), (256, 256, 256))
+        gray = img.convert('L')
         gray.save('gray.png')
         for x in range(width):
             for y in range(height):
