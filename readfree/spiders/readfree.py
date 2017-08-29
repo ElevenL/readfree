@@ -62,13 +62,13 @@ class ReadfreeSpider(CrawlSpider):
         gray = img.convert('L')
         gray.save('gray.png')
         print np.array(gray)
-        two = gray.point(lambda p: 0 if p < 120 else 1)
+        two = gray.point(lambda p: 0 if p < 120 else 255)
         gray.save('gray.png')
         for x in range(width):
             for y in range(height):
                 if x == 0 or x == width - 1 or y == 0 or y == height - 1:
-                    gray.putpixel((x, y), 1)
-                elif gray.getpixel((x, y)) != 1:
+                    gray.putpixel((x, y), 255)
+                elif gray.getpixel((x, y)) == 0:
                     count = 0
                     if gray.getpixel((x, y - 1)) == 0:
                         count += 1
@@ -79,7 +79,7 @@ class ReadfreeSpider(CrawlSpider):
                     if gray.getpixel((x + 1, y)) == 0:
                         count += 1
                     if count < 2:
-                        gray.putpixel((x, y), 1)
+                        gray.putpixel((x, y), 255)
         # two = gray.point(lambda p: 0 if 15 < p < 90 else 256)
         gray.save('gray1.png')
         min_res = img.filter(ImageFilter.MinFilter)
