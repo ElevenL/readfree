@@ -54,10 +54,10 @@ class ReadfreeSpider(CrawlSpider):
         for x in range(width):
             for y in range(height):
                 if x == 0 or x == width - 1 or y == 0 or y == height - 1:
-                    gray.putpixel((x, y), 256)
-                elif gray.getpixel((x, y)) != 256:
-                    if (gray.getpixel((x, y - 1)) == 256) and (gray.getpixel((x, y + 1)) == 256):
-                        gray.putpixel((x, y), 256)
+                    gray.putpixel((x, y), 1)
+                elif gray.getpixel((x, y)) == 0:
+                    if (gray.getpixel((x, y - 1)) == 1) and (gray.getpixel((x, y + 1)) == 1):
+                        gray.putpixel((x, y), 1)
         # two = gray.point(lambda p: 0 if 15 < p < 90 else 256)
         gray.save('gray1.png')
         min_res = img.filter(ImageFilter.MinFilter)
