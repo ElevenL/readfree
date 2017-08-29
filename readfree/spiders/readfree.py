@@ -3,7 +3,7 @@ import sys
 import pytesseract
 import tempfile
 import scrapy, json
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageEnhance
 from StringIO import StringIO
 from scrapy.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
@@ -41,20 +41,27 @@ class ReadfreeSpider(CrawlSpider):
         with open(img_path, 'wb') as f:
             f.write(bytes(response.body))
         img = Image.open(img_path)
-        if hasattr(img, "width"):
-            width, height = img.width, img.height
-        else:
-            width, height = img.size
-        for x in range(width):
-            for y in range(height):
-                if img.getpixel((x, y)) > (150, 150, 150):
-                    img.putpixel((x, y), (256, 256, 256))
-        gray = img.convert('L')
+
+        enhancer = ImageEnhance.Contrast(img)
+        img = enhancer.enhance(2)
+        gray = img.convert('1')
+
+
+        # if hasattr(img, "width"):
+        #     width, height = img.width, img.height
+        # else:
+        #     width, height = img.size
+        # for x in range(width):
+        #     for y in range(height):
+        #         if img.getpixel((x, y)) > (150, 150, 150):
+        #             img.putpixel((x, y), (256, 256, 256))
+        # gray = img.convert('L')
+        width, height = img.size
         gray.save('gray.png')
         for x in range(width):
             for y in range(height):
                 if x == 0 or x == width - 1 or y == 0 or y == height - 1:
-                    gray.putpixel((x, y), 1)
+                    gray.putpixel((x, y), 0)
                 elif gray.getpixel((x, y)) == 0:
                     if (gray.getpixel((x, y - 1)) == 1) and (gray.getpixel((x, y + 1)) == 1):
                         gray.putpixel((x, y), 1)
