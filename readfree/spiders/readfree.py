@@ -11,6 +11,8 @@ from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
 from scrapy.http import FormRequest, Request
 #from readfree.items import ReadfreeItem
+np.set_printoptions(threshold=np.inf)
+
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
