@@ -83,11 +83,11 @@ class ReadfreeSpider(CrawlSpider):
                         gray.putpixel((x, y), 255)
         # two = gray.point(lambda p: 0 if 15 < p < 90 else 256)
         gray.save('gray1.png')
-        min_res = img.filter(ImageFilter.MinFilter)
-        med_res = min_res.filter(ImageFilter.MedianFilter)
-        for _ in range(2):
-            med_res = med_res.filter(ImageFilter.MedianFilter)
-        captcha_01 = pytesseract.image_to_string(med_res)
+        # min_res = img.filter(ImageFilter.MinFilter)
+        # med_res = min_res.filter(ImageFilter.MedianFilter)
+        # for _ in range(2):
+        #     med_res = med_res.filter(ImageFilter.MedianFilter)
+        captcha_01 = pytesseract.image_to_string(gray.convert('1'))
         print '========='
         print captcha_01
         print '========='
