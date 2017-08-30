@@ -5,6 +5,7 @@ import pytesseract
 import tempfile
 import scrapy, json
 import numpy as np
+from lxml import html
 from PIL import Image, ImageFilter, ImageEnhance
 from StringIO import StringIO
 from scrapy.linkextractors.sgml import SgmlLinkExtractor
@@ -44,7 +45,7 @@ class ReadfreeSpider(CrawlSpider):
 
     def getcapid(self, response):
         img_path = tempfile.mktemp()
-        print img_path
+        # print img_path
         with open(img_path, 'wb') as f:
             f.write(bytes(response.body))
         img = Image.open(img_path)
@@ -66,7 +67,7 @@ class ReadfreeSpider(CrawlSpider):
         width, height = img.size
         gray = img.convert('L')
         gray.save('gray.png')
-        print np.array(gray)
+        # print np.array(gray)
         gray = gray.point(lambda p: 0 if p < 90 else 255)
         gray.save('point.png')
         for x in range(width):
@@ -118,12 +119,11 @@ class ReadfreeSpider(CrawlSpider):
         print 'parse_content'
         books = response.css('ul.unstyled.book-index > li.book-item')
         print '=============='
-        # print response.body
-        # print books
+        print books
         print len(books)
         print '=============='
-        for i in range(1, len(books)):
-            book = response.css('(ul.unstyled.book-index > li.book-item)[%d]' % i)
+        for book in books:
+            # print book
             item = ReadfreeItem()
             item['bookname'] = book.xpath('//div[@class="book-info"]/a/text()').extract()[0].decode('utf-8')
             item['author'] = book.xpath('//div[@class="book-author"]/a/text()').extract()[0].decode('utf-8')
