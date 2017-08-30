@@ -118,16 +118,11 @@ class ReadfreeSpider(CrawlSpider):
     def parse_content(self, response):
         print 'parse_content'
         books = response.css('ul.unstyled.book-index > li.book-item')
-        print '=============='
-        print books
-        print len(books)
-        print '=============='
         for book in books:
-            # print book
             item = ReadfreeItem()
-            item['bookname'] = book.xpath('//div[@class="book-info"]/a/text()').extract()[0].decode('utf-8')
-            item['author'] = book.xpath('//div[@class="book-author"]/a/text()').extract()[0].decode('utf-8')
-            item['douban_score'] = book.xpath('//span[@class="douban"]/span[@class="badge badge-success"]/text()').extract()[0].decode('utf-8')
-            item['bookimg'] = book.xpath('//a[@class="pjax"]/img/@src').extract()[0]
+            item['bookname'] = book.xpath('.//div[@class="book-info"]/a/text()').extract()[0].decode('utf-8')
+            item['author'] = book.xpath('.//div[@class="book-author"]/a/text()').extract()[0].decode('utf-8')
+            item['douban_score'] = book.xpath('.//span[@class="douban"]/span[@class="badge badge-success"]/text()').extract()[0].decode('utf-8')
+            item['bookimg'] = book.xpath('.//a[@class="pjax"]/img/@src').extract()[0]
             # print item['bookname'],item['author'],item['bookimg']
             yield item
