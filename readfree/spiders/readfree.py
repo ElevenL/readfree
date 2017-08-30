@@ -123,6 +123,13 @@ class ReadfreeSpider(CrawlSpider):
             item['bookname'] = book.xpath('.//div[@class="book-info"]/a/text()').extract()[0].decode('utf-8')
             item['author'] = book.xpath('.//div[@class="book-author"]/a/text()').extract()[0].decode('utf-8')
             item['douban_score'] = book.xpath('.//span[@class="douban"]/span[@class="badge badge-success"]/text()').extract()[0].decode('utf-8')
-            item['bookimg'] = book.xpath('.//a[@class="pjax"]/img/@src').extract()[0]
-            # print item['bookname'],item['author'],item['bookimg']
+            imgurl = book.xpath('.//a[@class="pjax"]/img/@src').extract()[0]
+            item['bookimg'] = imgurl.split('/')[-1]
+            if not imgurl.startswith('http'):
+                imgurl = self.base_url + imgurl
+            rsp = Request(imgurl)
+            img_path = item['bookimg']
+            with open(img_path, 'wb') as f:
+                f.write(bytes(rsp.body))
+            print item['bookname'],item['author'],item['douban_score'],item['bookimg']
             yield item
