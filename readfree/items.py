@@ -14,4 +14,4 @@ class ReadfreeItem(scrapy.Item):
     bookname = scrapy.Field()
     author = scrapy.Field()
     douban_score = scrapy.Field()
-    bookimg = scrapy.Field()
+    imgurl = scrapy.Field()
