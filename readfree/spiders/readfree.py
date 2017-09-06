@@ -123,13 +123,17 @@ class ReadfreeSpider(CrawlSpider):
         print 'parse_content'
         books = response.css('ul.unstyled.book-index > li.book-item')
         for book in books:
-            item = ReadfreeItem()
-            item['bookname'] = book.xpath('.//div[@class="book-info"]/a/text()').extract()[0].strip().decode('utf-8')
-            item['author'] = book.xpath('.//div[@class="book-author"]/a/text()').extract()[0].decode('utf-8')
-            item['douban_score'] = book.xpath('.//span[@class="douban"]/span[@class="badge badge-success"]/text()').extract()[0].decode('utf-8')
-            imgurl = book.xpath('.//a[@class="pjax"]/img/@src').extract()[0]
-            if not imgurl.startswith('http'):
-                imgurl = self.base_url + imgurl
-            item['imgurl'] = imgurl
-            print item['bookname'],item['author'],item['douban_score'],item['imgurl']
-            yield item
+            try:
+                item = ReadfreeItem()
+                item['bookname'] = book.xpath('.//div[@class="book-info"]/a/text()').extract()[0].strip().decode('utf-8')
+                item['author'] = book.xpath('.//div[@class="book-author"]/a/text()').extract()[0].decode('utf-8')
+                item['douban_score'] = book.xpath('.//span[@class="douban"]/span[@class="badge badge-success"]/text()').extract()[0].decode('utf-8')
+                imgurl = book.xpath('.//a[@class="pjax"]/img/@src').extract()[0]
+                if not imgurl.startswith('http'):
+                    imgurl = self.base_url + imgurl
+                item['imgurl'] = imgurl
+                print item['bookname'],item['author'],item['douban_score'],item['imgurl']
+                yield item
+            except IndexError, e:
+                print '[ERROR]:%s' % e
+                continue
