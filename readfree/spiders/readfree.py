@@ -31,7 +31,7 @@ class ReadfreeSpider(CrawlSpider):
     ]
 
     rules = [
-        Rule(SgmlLinkExtractor(allow=(r'/?page=\d+',)), callback='parse_content')
+        Rule(SgmlLinkExtractor(allow=(r'/?page=\d+',)), callback='parse_content', follow=True)
     ]
 
     def start_requests(self):
